@@ -82,7 +82,7 @@ export const importStore = (dump: any): void => {
 
   if (dump.version !== 3)
     throw new TypeError(
-      "Only settings exported from Tabliss 2.x or Productivity Tab can be imported",
+      "Only settings exported from Tabliss 2.x or Distraction-Free Tab can be imported",
     );
   delete dump.version;
 

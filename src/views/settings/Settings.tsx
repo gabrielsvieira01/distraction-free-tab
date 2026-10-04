@@ -33,7 +33,7 @@ const Settings: React.FC = () => {
     document.body.appendChild(a);
     a.style.display = "none";
     a.href = url;
-    a.download = "productivity-tab.json";
+    a.download = "distraction-free-tab.json";
     a.click();
     window.URL.revokeObjectURL(url);
     document.body.removeChild(a);

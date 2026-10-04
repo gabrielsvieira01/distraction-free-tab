@@ -1,9 +1,9 @@
 {
   "manifest_version": 2,
-  "name": "Productivity Tab",
-  "short_name": "Productivity Tab",
-  "version": "1.0.0",
-  "description": "A calm new tab page with site blocking, block-now sessions and a simple timer. Based on Tabliss.",
+  "name": "Distraction-Free Tab",
+  "short_name": "Distraction-Free Tab",
+  "version": "1.0.1",
+  "description": "A calm new tab that keeps distractions away: site blocking on a schedule, daily limits, block-now sessions and a simple timer. Based on Tabliss.",
   "browser_specific_settings": {
     "gecko": {
       "id": "productivity-tab@gabrielsvieira01.github.io",
@@ -51,6 +51,6 @@
       "48": "icons/48.png",
       "96": "icons/96.png"
     },
-    "default_title": "Productivity Tab"
+    "default_title": "Distraction-Free Tab"
   }
 }

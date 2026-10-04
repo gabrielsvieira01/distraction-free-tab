@@ -1,6 +1,6 @@
 {
-  "name": "productivity-tab",
-  "version": "1.0.0",
+  "name": "distraction-free-tab",
+  "version": "1.0.1",
   "license": "GPL-3.0",
   "private": true,
   "scripts": {

@@ -12,7 +12,7 @@ import "./Overlay.sass";
 const messages = defineMessages({
   settingsHint: {
     id: "dashboard.settingsHint",
-    defaultMessage: "Customise Productivity Tab",
+    defaultMessage: "Customise Distraction-Free Tab",
     description: "Hover hint text for the settings icon",
   },
   focusHint: {

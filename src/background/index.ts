@@ -96,7 +96,7 @@ browser.alarms.onAlarm.addListener(async (alarme) => {
   });
 });
 
-browser.browserAction.setBadgeBackgroundColor({ color: "#6366f1" });
+browser.browserAction.setBadgeBackgroundColor({ color: "#0ea5e9" });
 // O ícone da barra abre uma nova aba, onde ficam os widgets
 browser.browserAction.onClicked.addListener(() => {
   browser.tabs.create({});

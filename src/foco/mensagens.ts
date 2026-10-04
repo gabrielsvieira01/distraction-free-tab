@@ -1,5 +1,5 @@
 /**
- * Textos do Productivity Tab (bloqueio, timer, atrito). Inglês é o padrão;
+ * Textos do Distraction-Free Tab (bloqueio, timer, atrito). Inglês é o padrão;
  * as traduções ficam em src/locales/lang/<idioma>.json, com os mesmos ids,
  * junto das do Tabliss. Datas, horas, dias da semana e "25 min" vêm do Intl.
  */
