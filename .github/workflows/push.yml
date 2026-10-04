@@ -6,10 +6,10 @@ jobs:
     name: Run tests
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
         with:
-          node-version: 16
+          node-version: 24
           cache: npm
       - run: npm ci
       - run: npm test
@@ -19,21 +19,15 @@ jobs:
     strategy:
       matrix:
         build_target:
-          - chromium
           - firefox
           - web
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
         with:
-          node-version: 16
+          node-version: 24
           cache: npm
       - run: npm ci
+      # Só confere que compila: sem chave do Unsplash e sem publicar o pacote,
+      # já que o repositório é público
       - run: npm run build:${{ matrix.build_target }}
-        env:
-          GIPHY_API_KEY: ${{ secrets.GIPHY_API_KEY }}
-          UNSPLASH_API_KEY: ${{ secrets.UNSPLASH_API_KEY }}
-      - uses: actions/upload-artifact@v3
-        with:
-          name: tabliss-${{ matrix.build_target }}
-          path: dist/${{ matrix.build_target }}
