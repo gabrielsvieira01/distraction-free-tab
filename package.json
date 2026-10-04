@@ -5,11 +5,9 @@
   "private": true,
   "scripts": {
     "build": "npm run build:web",
-    "build:chromium": "cross-env NODE_ENV=production BUILD_TARGET=chromium webpack",
     "build:firefox": "cross-env NODE_ENV=production BUILD_TARGET=firefox webpack",
     "build:web": "cross-env NODE_ENV=production BUILD_TARGET=web webpack",
     "dev": "npm run dev:web",
-    "dev:chromium": "cross-env BUILD_TARGET=chromium webpack --watch",
     "dev:firefox": "cross-env BUILD_TARGET=firefox webpack --watch",
     "dev:web": "cross-env BUILD_TARGET=web webpack serve",
     "test": "tsc -p tsconfig.test.json && jest",
