@@ -1,0 +1,115 @@
+@use "../../../views/shared/vidro"
+
+// Na página principal o widget segue o minimalismo dos outros: só texto e barras
+.Bloqueio
+    min-width: 14em
+    font-size: 0.9em
+    text-align: left
+
+    p
+        margin: 0.2em 0
+
+    span
+        opacity: 0.75
+
+.Bloqueio-limite
+    margin: 0.4em 0
+
+.Bloqueio-barra
+    height: 4px
+    border-radius: 2px
+    background: rgba(255, 255, 255, 0.25)
+    overflow: hidden
+
+    div
+        height: 100%
+        border-radius: inherit
+        background: currentColor
+
+        &.estourou
+            background: var(--pt-perigo)
+
+.Bloqueio-furos
+    opacity: 0.75
+    font-size: 0.85em
+
+.BloqueioSettings
+    fieldset
+        @include vidro.cartao(14px)
+        margin: 0 0 1em
+        padding: 0.75em
+
+    textarea
+        width: 100%
+        min-height: 4.5em
+        font: inherit
+
+    .dias
+        display: flex
+        flex-wrap: wrap
+        gap: 0.4em
+
+        label
+            display: inline-flex
+            align-items: center
+            gap: 0.2em
+            margin: 0
+
+    .faixa, .linha
+        display: flex
+        align-items: center
+        gap: 0.5em
+        margin: 0.5em 0
+
+        input[type="time"]
+            width: auto
+
+    small
+        display: block
+        opacity: 0.7
+
+// Links discretos, no mesmo tom do texto, sublinhados só ao passar o mouse
+.Bloqueio a
+    cursor: pointer
+    text-decoration: underline
+    text-decoration-color: color-mix(in srgb, currentColor 40%, transparent)
+    text-underline-offset: 0.15em
+
+    &:hover
+        text-decoration-color: currentColor
+
+.BloqueioSettings
+    // Regras trancadas continuam visíveis, mas apagadas
+    .BloqueioSettings-regras
+        margin: 0
+        padding: 0
+        border: 0
+        background: none
+        box-shadow: none
+
+        &:disabled
+            opacity: 0.5
+
+    .Trava
+        margin: 0.5em 0 1em
+
+        p
+            margin: 0 0 0.5em
+
+    .Atrito
+        blockquote
+            margin: 0.5em 0
+            padding: 0.6em 0.8em
+            border-radius: 12px
+            background: rgba(129, 140, 248, 0.14)
+            font-style: italic
+            user-select: none
+
+        .button
+            display: block
+            width: 100%
+            margin-top: 0.5em
+
+    .Atrito-ou
+        margin: 0.4em 0
+        text-align: center

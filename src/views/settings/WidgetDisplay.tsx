@@ -1,4 +1,6 @@
 import React from "react";
+import { useIntl } from "react-intl";
+import { ui } from "../../locales/interface";
 import { WidgetDisplay as WidgetDisplayType } from "../../db/state";
 import PositionInput from "./PositionInput";
 import "./WidgetDisplay.css";
@@ -9,6 +11,7 @@ type Props = {
 };
 
 const WidgetDisplay: React.FC<Props> = ({ display, onChange }) => {
+  const intl = useIntl();
   return (
     <div className="WidgetDisplay">
       <PositionInput
@@ -17,7 +20,7 @@ const WidgetDisplay: React.FC<Props> = ({ display, onChange }) => {
       />
 
       <label>
-        Size
+        {intl.formatMessage(ui.tamanho)}
         <br />
         <input
           type="range"

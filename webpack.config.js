@@ -17,6 +17,13 @@ const config = {
   entry: {
     polyfills: "./src/polyfills.ts",
     main: ["normalize.css", "./src/styles.sass", "./src/main.tsx"],
+    // Só na extensão: script de fundo e página de bloqueio
+    ...(isWeb
+      ? {}
+      : {
+          background: "./src/background/index.ts",
+          bloqueado: "./src/bloqueado/bloqueado.ts",
+        }),
   },
   output: {
     path: path.resolve("dist", buildTarget),
@@ -43,7 +50,11 @@ const config = {
       },
       {
         test: /\.sass$/,
-        use: [MiniCssExtractPlugin.loader, "css-loader", "sass-loader"],
+        use: [
+          MiniCssExtractPlugin.loader,
+          "css-loader",
+          { loader: "sass-loader", options: { api: "modern" } },
+        ],
       },
       {
         test: /\.svg$/,
@@ -69,6 +80,7 @@ const config = {
     }),
     new HtmlWebpackPlugin({
       template: `./target/${buildTarget}/index.html`,
+      chunks: ["polyfills", "main"],
     }),
     new MiniCssExtractPlugin({
       filename: isWeb ? "[name].[contenthash:12].css" : "[name].css",
@@ -76,7 +88,6 @@ const config = {
     new webpack.DefinePlugin({
       BUILD_TARGET: JSON.stringify(buildTarget),
       DEV: JSON.stringify(!isProduction),
-      GIPHY_API_KEY: JSON.stringify(process.env.GIPHY_API_KEY),
       VERSION: JSON.stringify(version),
       UNSPLASH_API_KEY: JSON.stringify(process.env.UNSPLASH_API_KEY),
     }),
@@ -86,6 +97,16 @@ const config = {
     warnings: false,
   },
 };
+
+if (!isWeb) {
+  config.plugins.push(
+    new HtmlWebpackPlugin({
+      template: "./src/bloqueado/bloqueado.html",
+      filename: "bloqueado.html",
+      chunks: ["bloqueado"],
+    }),
+  );
+}
 
 if (isProduction) {
   config.plugins.push(

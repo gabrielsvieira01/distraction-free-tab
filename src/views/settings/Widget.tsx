@@ -1,11 +1,15 @@
 import React from "react";
+import { useIntl } from "react-intl";
 import { setWidgetDisplay } from "../../db/action";
+import { ui } from "../../locales/interface";
+import { usePluginText } from "../../locales/usePluginText";
 import { WidgetState } from "../../db/state";
 import { useToggle } from "../../hooks";
 import { getConfig } from "../../plugins";
 import { DownIcon, Icon, IconButton, RemoveIcon, UpIcon } from "../shared";
 import PluginContainer from "../shared/Plugin";
 import ToggleSection from "../shared/ToggleSection";
+import FontInput from "./FontInput";
 import "./Widget.sass";
 import WidgetDisplay from "./WidgetDisplay";
 
@@ -24,38 +28,42 @@ const Widget: React.FC<Props> = ({
 }) => {
   const [isOpen, toggleIsOpen] = useToggle(onRemove === undefined);
 
-  const { description, name, settingsComponent } = getConfig(plugin.key);
+  const config = getConfig(plugin.key);
+  const { settingsComponent } = config;
+  const intl = useIntl();
+  const t = intl.formatMessage;
+  const textoDoPlugin = usePluginText();
 
   const setDisplay = setWidgetDisplay.bind(null, plugin.id);
 
   return (
     <fieldset className="Widget">
       <div className="title--buttons">
-        <IconButton onClick={onRemove} title="Remove widget">
+        <IconButton onClick={onRemove} title={t(ui.removerWidget)}>
           <RemoveIcon />
         </IconButton>
 
         <IconButton
           onClick={toggleIsOpen}
-          title={`${isOpen ? "Close" : "Edit"} widget settings`}
+          title={t(isOpen ? ui.fecharWidget : ui.editarWidget)}
         >
           <Icon name="settings" />
         </IconButton>
 
         {onMoveDown && (
-          <IconButton onClick={onMoveDown} title="Move widget down">
+          <IconButton onClick={onMoveDown} title={t(ui.descerWidget)}>
             <DownIcon />
           </IconButton>
         )}
 
         {onMoveUp && (
-          <IconButton onClick={onMoveUp} title="Move widget up">
+          <IconButton onClick={onMoveUp} title={t(ui.subirWidget)}>
             <UpIcon />
           </IconButton>
         )}
 
-        <h4 onClick={toggleIsOpen}>{name}</h4>
-        {!isOpen && <p>{description}</p>}
+        <h4 onClick={toggleIsOpen}>{textoDoPlugin.nome(config)}</h4>
+        {!isOpen && <p>{textoDoPlugin.descricao(config)}</p>}
       </div>
 
       {isOpen && (
@@ -66,25 +74,19 @@ const Widget: React.FC<Props> = ({
             </div>
           )}
 
-          <ToggleSection name="Display Settings">
+          <ToggleSection abrir={t(ui.abrirExibicao)} fechar={t(ui.fecharExibicao)}>
             <WidgetDisplay display={plugin.display} onChange={setDisplay} />
           </ToggleSection>
 
-          <ToggleSection name="Font Settings">
+          <ToggleSection abrir={t(ui.abrirFonte)} fechar={t(ui.fecharFonte)}>
             <>
-              <label>
-                Font
-                <input
-                  type="text"
-                  value={plugin.display.fontFamily}
-                  onChange={(event) =>
-                    setDisplay({ fontFamily: event.target.value })
-                  }
-                />
-              </label>
+              <FontInput
+                value={plugin.display.fontFamily}
+                onChange={(fontFamily) => setDisplay({ fontFamily })}
+              />
 
               <label>
-                Weight
+                {t(ui.peso)}
                 <select
                   value={plugin.display.fontWeight}
                   onChange={(event) =>
@@ -95,18 +97,18 @@ const Widget: React.FC<Props> = ({
                     })
                   }
                 >
-                  <option value="">Default</option>
-                  <option value="100">Thin</option>
-                  <option value="300">Light</option>
-                  <option value="400">Regular</option>
-                  <option value="500">Medium</option>
-                  <option value="700">Bold</option>
-                  <option value="900">Black</option>
+                  <option value="">{t(ui.padrao)}</option>
+                  <option value="100">{t(ui.pesoFino)}</option>
+                  <option value="300">{t(ui.pesoLeve)}</option>
+                  <option value="400">{t(ui.pesoNormal)}</option>
+                  <option value="500">{t(ui.pesoMedio)}</option>
+                  <option value="700">{t(ui.pesoNegrito)}</option>
+                  <option value="900">{t(ui.pesoPreto)}</option>
                 </select>
               </label>
 
               <label>
-                Colour
+                {t(ui.cor)}
                 <input
                   type="color"
                   value={plugin.display.colour ?? "#ffffff"}

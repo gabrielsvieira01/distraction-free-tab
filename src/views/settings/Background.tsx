@@ -1,8 +1,10 @@
 import React from "react";
-import { FormattedMessage } from "react-intl";
+import { FormattedMessage, useIntl } from "react-intl";
 import { setBackground } from "../../db/action";
 import { BackgroundDisplay, db } from "../../db/state";
 import { useKey } from "../../lib/db/react";
+import { ui } from "../../locales/interface";
+import { usePluginText } from "../../locales/usePluginText";
 import { backgroundConfigs, getConfig } from "../../plugins";
 import Plugin from "../shared/Plugin";
 import ToggleSection from "../shared/ToggleSection";
@@ -11,6 +13,12 @@ const Background: React.FC = () => {
   const [data, setData] = useKey(db, "background");
 
   const plugin = getConfig(data.key);
+  const intl = useIntl();
+  const t = intl.formatMessage;
+  const textoDoPlugin = usePluginText();
+  const opcoes = backgroundConfigs
+    .map((config) => ({ config, nome: textoDoPlugin.nome(config) }))
+    .sort((a, b) => a.nome.localeCompare(b.nome, intl.locale));
 
   const setBackgroundDisplay = (display: BackgroundDisplay): void => {
     setData({ ...data, display: { ...data.display, ...display } });
@@ -32,9 +40,9 @@ const Background: React.FC = () => {
           onChange={(event) => setBackground(event.target.value)}
           className="primary"
         >
-          {backgroundConfigs.map((plugin) => (
-            <option key={plugin.key} value={plugin.key}>
-              {plugin.name}
+          {opcoes.map(({ config, nome }) => (
+            <option key={config.key} value={config.key}>
+              {nome}
             </option>
           ))}
         </select>
@@ -42,7 +50,7 @@ const Background: React.FC = () => {
 
       {plugin && (
         <div className="Widget">
-          <h4>{plugin.name}</h4>
+          <h4>{textoDoPlugin.nome(plugin)}</h4>
 
           {plugin.settingsComponent && (
             <div className="settings">
@@ -51,10 +59,10 @@ const Background: React.FC = () => {
           )}
 
           {plugin.supportsBackdrop && (
-            <ToggleSection name="Display Settings">
+            <ToggleSection abrir={t(ui.abrirExibicao)} fechar={t(ui.fecharExibicao)}>
               <>
                 <label>
-                  Blur <br />
+                  {t(ui.desfoque)} <br />
                   <input
                     type="range"
                     list="blur-markers"
@@ -75,7 +83,7 @@ const Background: React.FC = () => {
                 </label>
 
                 <label>
-                  Luminosity <br />
+                  {t(ui.luminosidade)} <br />
                   <input
                     type="range"
                     list="luminosity-markers"
@@ -90,9 +98,9 @@ const Background: React.FC = () => {
                     }
                   />
                   <datalist id="luminosity-markers">
-                    <option value="-1" label="Darken" />
+                    <option value="-1" label={t(ui.escurecer)} />
                     <option value="0" />
-                    <option value="1" label="Lighten" />
+                    <option value="1" label={t(ui.clarear)} />
                   </datalist>
                 </label>
               </>

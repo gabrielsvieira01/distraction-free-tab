@@ -1,11 +1,13 @@
 import React, { FC } from "react";
+import { FormattedMessage } from "react-intl";
+import { ui } from "../../../locales/interface";
 
 import { Props, defaultData } from "./types";
 
 const GradientSettings: FC<Props> = ({ data = defaultData, setData }) => (
   <div className="GradientSettings">
     <label>
-      From Colour
+      <FormattedMessage {...ui.corInicial} />
       <input
         type="color"
         value={data.from}
@@ -14,7 +16,7 @@ const GradientSettings: FC<Props> = ({ data = defaultData, setData }) => (
     </label>
 
     <label>
-      To Colour
+      <FormattedMessage {...ui.corFinal} />
       <input
         type="color"
         value={data.to}
@@ -23,7 +25,7 @@ const GradientSettings: FC<Props> = ({ data = defaultData, setData }) => (
     </label>
 
     <label>
-      Angle (0-360)
+      <FormattedMessage {...ui.angulo} />
       <input
         type="number"
         value={data.angle}

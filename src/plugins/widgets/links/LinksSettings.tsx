@@ -1,4 +1,6 @@
 import React, { FC } from "react";
+import { useIntl } from "react-intl";
+import { ui } from "../../../locales/interface";
 
 import { useSavedReducer } from "../../../hooks";
 import Input from "./Input";
@@ -7,13 +9,14 @@ import { reducer } from "./reducer";
 import { Link, Props, defaultData } from "./types";
 
 const LinksSettings: FC<Props> = ({ data = defaultData, setData }) => {
+  const t = useIntl().formatMessage;
   const saveLinks = (links: Link[]) => setData({ ...data, links });
   const dispatch = useSavedReducer(reducer, data.links, saveLinks);
 
   return (
     <div className="LinksSettings">
       <label>
-        Number of columns
+        {t(ui.colunas)}
         <input
           type="number"
           value={data.columns}
@@ -30,7 +33,7 @@ const LinksSettings: FC<Props> = ({ data = defaultData, setData }) => {
           checked={data.visible}
           onChange={() => setData({ ...data, visible: !data.visible })}
         />
-        Links are always visible
+        {t(ui.linksSempreVisiveis)}
       </label>
 
       <label>
@@ -41,7 +44,7 @@ const LinksSettings: FC<Props> = ({ data = defaultData, setData }) => {
             setData({ ...data, linkOpenStyle: !data.linkOpenStyle })
           }
         />
-        Links open in a new tab
+        {t(ui.linksNovaAba)}
       </label>
 
       <hr />
@@ -73,7 +76,7 @@ const LinksSettings: FC<Props> = ({ data = defaultData, setData }) => {
           className="button button--primary"
           onClick={() => dispatch(addLink())}
         >
-          Add link
+          {t(ui.adicionarLink)}
         </button>
       </p>
     </div>

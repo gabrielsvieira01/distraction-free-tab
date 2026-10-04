@@ -1,9 +1,10 @@
 import React from "react";
-import { FormattedMessage } from "react-intl";
+import { FormattedMessage, useIntl } from "react-intl";
 import { UiContext } from "../../contexts/ui";
 import { exportStore, importStore, resetStore } from "../../db/action";
+import { mensagens } from "../../foco/mensagens";
+import { ui } from "../../locales/interface";
 import { useKeyPress } from "../../hooks";
-import { Icon } from "../shared";
 import Logo from "../shared/Logo";
 import Background from "./Background";
 import Persist from "./Persist";
@@ -13,12 +14,11 @@ import Widgets from "./Widgets";
 
 const Settings: React.FC = () => {
   const { toggleSettings } = React.useContext(UiContext);
+  const intl = useIntl();
 
   const handleReset = () => {
     if (
-      confirm(
-        "Are you sure you want to delete all of your Tabliss settings? This cannot be undone.",
-      )
+      confirm(intl.formatMessage(ui.confirmarRedefinir))
     )
       resetStore();
   };
@@ -33,7 +33,7 @@ const Settings: React.FC = () => {
     document.body.appendChild(a);
     a.style.display = "none";
     a.href = url;
-    a.download = "tabliss.json";
+    a.download = "productivity-tab.json";
     a.click();
     window.URL.revokeObjectURL(url);
     document.body.removeChild(a);
@@ -55,9 +55,12 @@ const Settings: React.FC = () => {
               importStore(state);
             } catch (error) {
               alert(
-                `Invalid import file: ${
-                  error instanceof Error ? error.message : "Uknown error"
-                }`,
+                intl.formatMessage(ui.importacaoInvalida, {
+                  error:
+                    error instanceof Error
+                      ? error.message
+                      : intl.formatMessage(ui.erroDesconhecido),
+                }),
               );
             }
           }
@@ -85,48 +88,39 @@ const Settings: React.FC = () => {
         <System />
 
         <p style={{ marginBottom: "2rem" }}>
-          <a onClick={handleImport}>Import</a>,{" "}
-          <a onClick={handleExport}>export</a> or{" "}
-          <a onClick={handleReset}>reset</a> your settings
+          <FormattedMessage
+            {...ui.importarExportar}
+            values={{
+              import: (
+                <a onClick={handleImport}>{intl.formatMessage(ui.importar)}</a>
+              ),
+              export: (
+                <a onClick={handleExport}>{intl.formatMessage(ui.exportar)}</a>
+              ),
+              reset: (
+                <a onClick={handleReset}>{intl.formatMessage(ui.redefinir)}</a>
+              ),
+            }}
+          />
         </p>
 
         <Persist />
 
-        <div style={{ textAlign: "center" }} className="Widget">
-          <h4>Support Tabliss</h4>
-          <p>
-            <a
-              href="https://www.paypal.com/donate/?hosted_button_id=FK7VRWS9A2EW4"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="button button--primary"
-              title="I do love coffee"
-            >
-              <Icon name="coffee" /> Donate a coffee 😍
-            </a>
-          </p>
-          <p>
-            <a href="https://tabliss.io/" target="_blank">
-              <Icon name="globe" /> Website
-            </a>
-            &nbsp;&nbsp;
-            <a
-              href="https://twitter.com/tabliss"
-              rel="noopener noreferrer"
-              target="_blank"
-            >
-              <Icon name="twitter" /> Twitter
-            </a>
-            &nbsp;&nbsp;
-            <a
-              href="https://github.com/joelshepherd/tabliss"
-              rel="noopener noreferrer"
-              target="_blank"
-            >
-              <Icon name="github" /> GitHub
-            </a>
-          </p>
-        </div>
+        <FormattedMessage
+          {...mensagens.creditos}
+          tagName="p"
+          values={{
+            tabliss: (
+              <a
+                href="https://github.com/joelshepherd/tabliss"
+                rel="noopener noreferrer"
+                target="_blank"
+              >
+                Tabliss
+              </a>
+            ),
+          }}
+        />
 
         <FormattedMessage
           id="settings.translationCredits"

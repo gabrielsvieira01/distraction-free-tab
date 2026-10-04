@@ -12,8 +12,13 @@
 }
 
 .Modal {
-  background: white;
-  border-radius: 1rem 1rem 0 0;
+  position: relative;
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.03) 42%), var(--pt-vidro-escuro);
+  backdrop-filter: blur(28px) saturate(170%);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 24px 60px rgba(0, 0, 0, 0.4);
+  color: var(--pt-texto);
+  border-radius: 1.5rem 1.5rem 0 0;
   padding: 2rem;
   min-width: 300px;
   max-width: 500px;

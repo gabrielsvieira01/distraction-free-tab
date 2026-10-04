@@ -1,13 +1,18 @@
 {
   "manifest_version": 2,
-  "name": "Tabliss",
-  "short_name": "Tabliss",
+  "name": "Productivity Tab",
+  "short_name": "Productivity Tab",
   "version": "2.6.0",
-  "description": "A beautiful New Tab page with many customisable backgrounds and widgets that does not require any permissions.",
-  "applications": {
+  "description": "A calm new tab page with site blocking, block-now sessions and a simple timer. Based on Tabliss.",
+  "browser_specific_settings": {
     "gecko": {
-      "id": "extension@tabliss.io",
-      "strict_min_version": "54.0"
+      "id": "foco@local",
+      "strict_min_version": "142.0",
+      "data_collection_permissions": {
+        "required": [
+          "none"
+        ]
+      }
     }
   },
   "chrome_settings_overrides": {
@@ -22,5 +27,30 @@
     "96": "icons/96.png",
     "128": "icons/128.png"
   },
-  "permissions": ["storage"]
+  "permissions": [
+    "storage",
+    "tabs",
+    "idle",
+    "alarms",
+    "notifications",
+    "webRequest",
+    "webRequestBlocking",
+    "<all_urls>"
+  ],
+  "background": {
+    "scripts": [
+      "background.js"
+    ]
+  },
+  "web_accessible_resources": [
+    "bloqueado.html"
+  ],
+  "browser_action": {
+    "default_icon": {
+      "32": "icons/32.png",
+      "48": "icons/48.png",
+      "96": "icons/96.png"
+    },
+    "default_title": "Productivity Tab"
+  }
 }

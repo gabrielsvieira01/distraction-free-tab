@@ -3,18 +3,17 @@ import { useToggle } from "../../hooks";
 
 type Props = {
   children: React.ReactNode;
-  name: string;
+  abrir: string;
+  fechar: string;
 };
 
-const ToggleSection: React.FC<Props> = ({ name, children }) => {
+const ToggleSection: React.FC<Props> = ({ abrir, fechar, children }) => {
   const [isOpen, toggleOpen] = useToggle();
 
   return (
     <>
       <p>
-        <a onClick={toggleOpen}>
-          {isOpen ? "Close" : "Open"} {name}
-        </a>
+        <a onClick={toggleOpen}>{isOpen ? fechar : abrir}</a>
       </p>
 
       {isOpen && children}

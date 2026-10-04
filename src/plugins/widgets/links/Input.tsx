@@ -1,5 +1,7 @@
 import icons from "feather-icons/dist/icons.json";
 import React, { FC } from "react";
+import { useIntl } from "react-intl";
+import { ui } from "../../../locales/interface";
 
 import {
   IconButton,
@@ -19,30 +21,34 @@ type Props = Link & {
 
 const iconList = Object.keys(icons);
 
-const Input: FC<Props> = (props) => (
+const Input: FC<Props> = (props) => {
+  const t = useIntl().formatMessage;
+  return (
   <div className="LinkInput">
     <h5>
       <div className="title--buttons">
-        <IconButton onClick={props.onRemove} title="Remove link">
+        <IconButton onClick={props.onRemove} title={t(ui.removerLink)}>
           <RemoveIcon />
         </IconButton>
         {props.onMoveDown && (
-          <IconButton onClick={props.onMoveDown} title="Move link down">
+          <IconButton onClick={props.onMoveDown} title={t(ui.descerLink)}>
             <DownIcon />
           </IconButton>
         )}
         {props.onMoveUp && (
-          <IconButton onClick={props.onMoveUp} title="Move link up">
+          <IconButton onClick={props.onMoveUp} title={t(ui.subirLink)}>
             <UpIcon />
           </IconButton>
         )}
       </div>
 
-      {props.number <= 9 ? `Keyboard shortcut ${props.number}` : "Shortcut"}
+      {props.number <= 9
+        ? t(ui.atalho, { number: props.number })
+        : t(ui.atalhoSemNumero)}
     </h5>
 
     <label>
-      URL
+      {t(ui.endereco)}
       <input
         type="url"
         value={props.url}
@@ -51,7 +57,7 @@ const Input: FC<Props> = (props) => (
     </label>
 
     <label>
-      Name <span className="text--grey">(optional)</span>
+      {t(ui.nome)} <span className="text--grey">{t(ui.opcional)}</span>
       <input
         type="text"
         value={props.name}
@@ -60,13 +66,13 @@ const Input: FC<Props> = (props) => (
     </label>
 
     <label>
-      Icon <span className="text--grey">(optional)</span>
+      {t(ui.icone)} <span className="text--grey">{t(ui.opcional)}</span>
       <select
         value={props.icon}
         onChange={(event) => props.onChange({ icon: event.target.value })}
       >
-        <option value={""}>None</option>
-        <option value="_favicon">Website Icon</option>
+        <option value={""}>{t(ui.nenhum)}</option>
+        <option value="_favicon">{t(ui.iconeDoSite)}</option>
         <optgroup label="Feather Icons">
           {iconList.map((key) => (
             <option key={key}>{key}</option>
@@ -77,6 +83,7 @@ const Input: FC<Props> = (props) => (
 
     <hr />
   </div>
-);
+  );
+};
 
 export default Input;

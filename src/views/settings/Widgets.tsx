@@ -1,14 +1,22 @@
 import React from "react";
-import { FormattedMessage } from "react-intl";
+import { FormattedMessage, useIntl } from "react-intl";
 import { addWidget, removeWidget, reorderWidget } from "../../db/action";
 import { selectWidgets } from "../../db/select";
 import { db } from "../../db/state";
 import { useSelector } from "../../lib/db/react";
+import { ui } from "../../locales/interface";
+import { usePluginText } from "../../locales/usePluginText";
 import { widgetConfigs } from "../../plugins";
 import Widget from "./Widget";
 
 const Widgets: React.FC = () => {
   const widgets = useSelector(db, selectWidgets);
+  const intl = useIntl();
+  const textoDoPlugin = usePluginText();
+  // Ordem alfabética no idioma atual, não no inglês
+  const opcoes = widgetConfigs
+    .map((config) => ({ config, nome: textoDoPlugin.nome(config) }))
+    .sort((a, b) => a.nome.localeCompare(b.nome, intl.locale));
 
   return (
     <div>
@@ -27,11 +35,11 @@ const Widgets: React.FC = () => {
           className="primary"
         >
           <option disabled value="">
-            Add a new widget
+            {intl.formatMessage(ui.adicionarWidget)}
           </option>
-          {widgetConfigs.map((plugin) => (
-            <option key={plugin.key} value={plugin.key}>
-              {plugin.name}
+          {opcoes.map(({ config, nome }) => (
+            <option key={config.key} value={config.key}>
+              {nome}
             </option>
           ))}
         </select>

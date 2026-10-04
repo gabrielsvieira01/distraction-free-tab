@@ -1,22 +1,26 @@
 import React, { FC } from "react";
+import { useIntl } from "react-intl";
+import { ui } from "../../../locales/interface";
 
 import { Props, defaultData } from "./types";
 import TimeZoneInput from "../../../views/shared/timeZone/TimeZoneInput";
 
-const TimeSettings: FC<Props> = ({ data = defaultData, setData }) => (
+const TimeSettings: FC<Props> = ({ data = defaultData, setData }) => {
+  const t = useIntl().formatMessage;
+  return (
   <div className="TimeSettings">
     <label>
-      Name
+      {t(ui.nome)}
       <input
         type="text"
         value={data.name}
-        placeholder="Optional name"
+        placeholder={t(ui.nomeOpcional)}
         onChange={(event) => setData({ ...data, name: event.target.value })}
       />
     </label>
 
     <label>
-      Time Zone
+      {t(ui.fusoHorario)}
       <TimeZoneInput
         timeZone={data.timeZone}
         onChange={(timeZone) => setData({ ...data, timeZone })}
@@ -29,7 +33,7 @@ const TimeSettings: FC<Props> = ({ data = defaultData, setData }) => (
         checked={data.mode === "analogue"}
         onChange={() => setData({ ...data, mode: "analogue" })}
       />{" "}
-      Analogue
+      {t(ui.analogico)}
     </label>
 
     <label>
@@ -38,7 +42,7 @@ const TimeSettings: FC<Props> = ({ data = defaultData, setData }) => (
         checked={data.mode === "digital" && data.hour12}
         onChange={() => setData({ ...data, mode: "digital", hour12: true })}
       />{" "}
-      12-hour digital
+      {t(ui.digital12)}
     </label>
 
     <label>
@@ -47,7 +51,7 @@ const TimeSettings: FC<Props> = ({ data = defaultData, setData }) => (
         checked={data.mode === "digital" && !data.hour12}
         onChange={() => setData({ ...data, mode: "digital", hour12: false })}
       />{" "}
-      24-hour digital
+      {t(ui.digital24)}
     </label>
 
     <label>
@@ -56,7 +60,7 @@ const TimeSettings: FC<Props> = ({ data = defaultData, setData }) => (
         checked={data.showSeconds}
         onChange={() => setData({ ...data, showSeconds: !data.showSeconds })}
       />{" "}
-      Display seconds
+      {t(ui.mostrarSegundos)}
     </label>
 
     <label>
@@ -65,7 +69,7 @@ const TimeSettings: FC<Props> = ({ data = defaultData, setData }) => (
         checked={data.showMinutes}
         onChange={() => setData({ ...data, showMinutes: !data.showMinutes })}
       />{" "}
-      Display minutes
+      {t(ui.mostrarMinutos)}
     </label>
 
     {data.mode === "digital" && data.hour12 && (
@@ -77,7 +81,7 @@ const TimeSettings: FC<Props> = ({ data = defaultData, setData }) => (
             setData({ ...data, showDayPeriod: !data.showDayPeriod })
           }
         />{" "}
-        Display day period
+        {t(ui.mostrarPeriodo)}
       </label>
     )}
 
@@ -87,9 +91,10 @@ const TimeSettings: FC<Props> = ({ data = defaultData, setData }) => (
         checked={data.showDate}
         onChange={() => setData({ ...data, showDate: !data.showDate })}
       />{" "}
-      Display date
+      {t(ui.mostrarData)}
     </label>
   </div>
-);
+  );
+};
 
 export default TimeSettings;

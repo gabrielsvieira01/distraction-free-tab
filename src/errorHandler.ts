@@ -4,7 +4,7 @@ export function register(): void {
   init({
     autoSessionTracking: false, // Wtf sentry
     dsn: "https://2e0e75c7477c4c3e9572ee97241e569c@o113629.ingest.sentry.io/250221",
-    enabled: !DEV,
+    enabled: false, // Fork pessoal: não reportar ao Sentry do Tabliss original
     release: VERSION,
   });
   setTag("target", BUILD_TARGET);

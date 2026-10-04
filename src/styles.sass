@@ -1,8 +1,21 @@
 *
     box-sizing: border-box
 
+// Cores do Productivity Tab (o gradiente é o mesmo da logo)
+:root
+    --pt-gradiente: linear-gradient(135deg, #22d3ee, #6366f1 52%, #a855f7)
+    // Versão clara do gradiente, legível como texto sobre vidro escuro
+    --pt-gradiente-texto: linear-gradient(135deg, #67e8f9, #a5b4fc 50%, #d8b4fe)
+    --pt-acento: #818cf8
+    --pt-acento-halo: rgba(129, 140, 248, 0.35)
+    --pt-link: #a5b4fc
+    --pt-texto: rgba(255, 255, 255, 0.94)
+    --pt-texto-2: rgba(255, 255, 255, 0.62)
+    --pt-vidro-escuro: rgba(16, 18, 27, 0.55)
+    --pt-perigo: #fb7185
+
 html, body
-    font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", "Roboto", "Helvetica Neue", Arial, sans-serif
+    font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI Variable Text", "Segoe UI", "Roboto", "Helvetica Neue", Arial, sans-serif
     font-size: 14px
     line-height: 1.25
     color: #5a636a
@@ -21,7 +34,7 @@ html.theme-dark
     background-color: black
 
 a
-    color: #3498db
+    color: var(--pt-link)
     cursor: pointer
     text-decoration: none
 
@@ -54,6 +67,11 @@ i
         height: 1em
         width: auto
         overflow: visible !important
+
+// A lista aberta de um select é nativa; sem isto ela herdaria texto claro em fundo branco
+option
+    background: #1b1d27
+    color: #fff
 
 .text
     &--grey

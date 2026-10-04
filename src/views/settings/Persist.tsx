@@ -1,6 +1,9 @@
 import React from "react";
+import { useIntl } from "react-intl";
+import { ui } from "../../locales/interface";
 
 const Persist: React.FC = () => {
+  const intl = useIntl();
   const [error, setError] = React.useState(false);
   const [persisted, setPersisted] = React.useState(true); // Hide until we know otherwise
 
@@ -20,16 +23,13 @@ const Persist: React.FC = () => {
 
   return (
     <div className="Widget" style={{ textAlign: "center" }}>
-      <h4>Persist Settings</h4>
-      <p>
-        Would you like Tabliss to ask your browser to save your setting
-        permanently?
-      </p>
+      <h4>{intl.formatMessage(ui.persistirTitulo)}</h4>
+      <p>{intl.formatMessage(ui.persistirPergunta)}</p>
       {error ? (
-        <p>Could not persist settings at this time.</p>
+        <p>{intl.formatMessage(ui.persistirFalhou)}</p>
       ) : (
         <button className="button button--primary" onClick={handleClick}>
-          Persist Settings
+          {intl.formatMessage(ui.persistirTitulo)}
         </button>
       )}
     </div>

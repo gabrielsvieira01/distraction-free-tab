@@ -1,12 +1,16 @@
 import React, { FC } from "react";
+import { useIntl } from "react-intl";
+import { ui } from "../../../locales/interface";
 
 import { engines } from "./engines";
 import { Props, defaultData } from "./types";
 
-const SearchSettings: FC<Props> = ({ data = defaultData, setData }) => (
+const SearchSettings: FC<Props> = ({ data = defaultData, setData }) => {
+  const t = useIntl().formatMessage;
+  return (
   <div className="SearchSettings">
     <label>
-      Search Provider
+      {t(ui.buscador)}
       <select
         onChange={(event) =>
           setData({ ...data, searchEngine: event.target.value })
@@ -23,7 +27,7 @@ const SearchSettings: FC<Props> = ({ data = defaultData, setData }) => (
 
     {BUILD_TARGET === "web" && (
       <label>
-        Suggestions Provider
+        {t(ui.sugestoes)}
         <select
           onChange={(event) =>
             setData({ ...data, suggestionsEngine: event.target.value })
@@ -31,7 +35,7 @@ const SearchSettings: FC<Props> = ({ data = defaultData, setData }) => (
           value={data.suggestionsEngine}
         >
           <option key="off" value="">
-            Off
+            {t(ui.desligado)}
           </option>
           {engines
             .filter(({ suggest_url }) => Boolean(suggest_url))
@@ -46,7 +50,7 @@ const SearchSettings: FC<Props> = ({ data = defaultData, setData }) => (
 
     {data.suggestionsEngine && (
       <label>
-        Suggestion Quanitity
+        {t(ui.quantidadeSugestoes)}
         <input
           type="number"
           min="1"
@@ -62,6 +66,7 @@ const SearchSettings: FC<Props> = ({ data = defaultData, setData }) => (
       </label>
     )}
   </div>
-);
+  );
+};
 
 export default SearchSettings;

@@ -1,5 +1,7 @@
 import { getTimezoneOffset } from "date-fns-tz";
 import React from "react";
+import { useIntl } from "react-intl";
+import { ui } from "../../../locales/interface";
 import zones from "./zones.json";
 
 type Props = {
@@ -16,6 +18,7 @@ type ZoneOption = {
 let cachedZoneOptions: ZoneOption[] | null = null;
 
 const TimeZoneInput: React.FC<Props> = ({ timeZone, onChange }) => {
+  const intl = useIntl();
   const [zoneOptions, setZoneOptions] = React.useState(cachedZoneOptions);
 
   React.useEffect(() => {
@@ -49,7 +52,7 @@ const TimeZoneInput: React.FC<Props> = ({ timeZone, onChange }) => {
       value={timeZone || ""}
       onChange={(event) => onChange(event.target.value || null)}
     >
-      <option value="">Automatic</option>
+      <option value="">{intl.formatMessage(ui.fusoAutomatico)}</option>
       {zoneOptions ? (
         zoneOptions.map((option) => (
           <option key={option.id} value={option.id}>
@@ -57,7 +60,7 @@ const TimeZoneInput: React.FC<Props> = ({ timeZone, onChange }) => {
           </option>
         ))
       ) : (
-        <option disabled>Loading...</option>
+        <option disabled>{intl.formatMessage(ui.carregando)}</option>
       )}
     </select>
   );

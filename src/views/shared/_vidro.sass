@@ -1,0 +1,74 @@
+// Visual "liquid glass" do Productivity Tab: superfícies translúcidas com
+// desfoque, um aro de luz na borda e sombra suave. Cores ficam em src/styles.sass.
+
+// Painel grande (configurações, modal, página de bloqueio): vidro escuro
+// legível sobre qualquer foto de fundo. O elemento precisa estar posicionado.
+@mixin vidro($tinta: var(--pt-vidro-escuro), $raio: 24px, $desfoque: 28px)
+    background: linear-gradient(160deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.03) 42%), $tinta
+    backdrop-filter: blur($desfoque) saturate(170%)
+    border: 1px solid rgba(255, 255, 255, 0.16)
+    border-radius: $raio
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), inset 0 -1px 0 rgba(255, 255, 255, 0.05), 0 24px 60px rgba(0, 0, 0, 0.4)
+
+    // Aro com reflexo: claro no canto de cima à esquerda, some no meio
+    &::before
+        content: ""
+        position: absolute
+        inset: 0
+        border-radius: inherit
+        padding: 1px
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0) 32%, rgba(255, 255, 255, 0) 68%, rgba(255, 255, 255, 0.3))
+        mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)
+        mask-composite: exclude
+        pointer-events: none
+
+// Peça pequena sobre a foto (busca, links, widget): vidro claro que herda a cor do texto
+@mixin vidro-leve($raio: 999px)
+    background: linear-gradient(160deg, rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0.06))
+    backdrop-filter: blur(18px) saturate(160%)
+    border: 1px solid rgba(255, 255, 255, 0.28)
+    border-radius: $raio
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4), 0 10px 30px rgba(0, 0, 0, 0.22)
+
+// Cartão dentro de um painel de vidro: sem desfoque próprio, só um degrau de luz
+@mixin cartao($raio: 18px)
+    background: rgba(255, 255, 255, 0.06)
+    border: 1px solid rgba(255, 255, 255, 0.1)
+    border-radius: $raio
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1)
+
+// Campo de formulário escavado no vidro
+@mixin campo
+    background: rgba(255, 255, 255, 0.07)
+    border: 1px solid rgba(255, 255, 255, 0.16)
+    border-radius: 12px
+    color: var(--pt-texto)
+    transition: border-color 0.15s, box-shadow 0.15s, background 0.15s
+
+    &:hover
+        background: rgba(255, 255, 255, 0.1)
+
+    &:focus
+        outline: none
+        border-color: var(--pt-acento)
+        box-shadow: 0 0 0 3px var(--pt-acento-halo)
+
+@mixin botao-acento
+    background: var(--pt-gradiente)
+    color: white
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45), 0 6px 18px rgba(99, 102, 241, 0.35)
+
+    &:hover
+        filter: brightness(1.08)
+
+    &:active
+        filter: brightness(0.94)
+
+@mixin botao-vidro
+    background: rgba(255, 255, 255, 0.1)
+    border: 1px solid rgba(255, 255, 255, 0.18)
+    color: var(--pt-texto)
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2)
+
+    &:hover
+        background: rgba(255, 255, 255, 0.18)

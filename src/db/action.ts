@@ -1,6 +1,6 @@
 import { nanoid } from "nanoid";
 import { DB } from "../lib";
-import migrateFrom2 from "./migrations/migrate2";
+import { backgroundConfigs, widgetConfigs } from "../plugins";
 import { selectWidgets } from "./select";
 import { cache, db, WidgetDisplay } from "./state";
 
@@ -80,22 +80,30 @@ export const importStore = (dump: any): void => {
   if (typeof dump !== "object" || dump === null)
     throw new TypeError("Unexpected format");
 
-  resetStore();
-  if ("backgrounds" in dump) {
-    // Version 2 config
-    DB.put(db, `widget/default-time`, null);
-    DB.put(db, `widget/default-greeting`, null);
-    dump = migrateFrom2(dump);
-  } else if (dump.version === 3) {
-    // Version 3 config
-    delete dump.version;
-  } else if (dump.version > 3) {
-    // Future version
-    throw new TypeError("Settings exported from an newer version of Tabliss");
-  } else {
-    // Unknown version
-    throw new TypeError("Unknown settings version");
+  if (dump.version !== 3)
+    throw new TypeError(
+      "Only settings exported from Tabliss 2.x or Productivity Tab can be imported",
+    );
+  delete dump.version;
+
+  // Descarta widgets e fundos que este fork removeu (ex.: clima, Giphy)
+  const known = new Set(
+    [...backgroundConfigs, ...widgetConfigs].map((config) => config.key),
+  );
+  const dropped = new Set<string>();
+  for (const [key, val] of Object.entries<any>(dump)) {
+    if (key.startsWith("widget/") && val && !known.has(val.key)) {
+      dropped.add(val.id);
+      delete dump[key];
+    }
   }
+  if (dump.background && !known.has(dump.background.key)) {
+    dropped.add(dump.background.id);
+    delete dump.background;
+  }
+  for (const id of dropped) delete dump[`data/${id}`];
+
+  resetStore();
   // @ts-ignore
   Object.entries(dump).forEach(([key, val]) => DB.put(db, key, val));
 };
