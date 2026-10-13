@@ -6,12 +6,21 @@ import {
   extensaoDisponivel,
   useArmazenamento,
 } from "../../../foco/armazenamento";
-import { formatarHora, nomesDosDias } from "../../../foco/idioma";
-import { mensagens } from "../../../foco/mensagens";
 import {
+  descreverPausa,
+  formatarHora,
+  nomesDosDias,
+} from "../../../foco/idioma";
+import { Mensagem, mensagens } from "../../../foco/mensagens";
+import {
+  BloqueioAgora,
+  chaveDia,
+  fimDoDia,
   LimiteDiario,
   normalizarSite,
   novoId,
+  Pausa,
+  pausaAtiva,
   RegraHorario,
   regrasVazias,
 } from "../../../foco/regras";
@@ -22,6 +31,8 @@ import { useAgora } from "./useAgora";
 /** Quanto tempo a edição fica destrancada depois de passar pelo atrito */
 const MINUTOS_DESTRANCADA = 10;
 const semDestrancar: number | null = null;
+const semPausa: Pausa | null = null;
+const semBloqueioAgora: BloqueioAgora | null = null;
 
 const sitesDoTexto = (texto: string) =>
   [...new Set(texto.split(/[\n,]/).map(normalizarSite))].filter(Boolean);
@@ -231,6 +242,121 @@ const Trava: FC<{
   );
 };
 
+type EscolhaPausa = "hoje" | "data" | "aberta";
+
+const OPCOES_DE_PAUSA: [EscolhaPausa, Mensagem][] = [
+  ["hoje", mensagens.pausaHoje],
+  ["data", mensagens.pausaAteData],
+  ["aberta", mensagens.pausaAberta],
+];
+
+/** Valor de um campo datetime-local, na hora local: "2026-10-14T08:00" */
+const valorDataHora = (data: Date) => {
+  const p = (n: number) => String(n).padStart(2, "0");
+  return `${chaveDia(data)}T${p(data.getHours())}:${p(data.getMinutes())}`;
+};
+
+const amanhaCedo = () => {
+  const data = new Date();
+  data.setDate(data.getDate() + 1);
+  data.setHours(8, 0, 0, 0);
+  return valorDataHora(data);
+};
+
+/**
+ * Pausa de todo o bloqueio, para férias ou um dia de folga. Pausar passa
+ * pelo atrito; retomar é um clique só, porque é voltar a se proteger.
+ */
+const PausaDoBloqueio: FC<{ agora: Date }> = ({ agora }) => {
+  const { t, locale } = useIdioma();
+  const [pausa, setPausa] = useArmazenamento<Pausa | null>(CHAVES.pausa, semPausa);
+  const [, setManual] = useArmazenamento<BloqueioAgora | null>(
+    CHAVES.agora,
+    semBloqueioAgora,
+  );
+  const [escolha, setEscolha] = React.useState<EscolhaPausa>("hoje");
+  const [data, setData] = React.useState(amanhaCedo);
+  const [pedindo, setPedindo] = React.useState(false);
+
+  if (pausaAtiva(pausa, +agora))
+    return (
+      <div className="Pausa">
+        <p>⏸ {descreverPausa(pausa, t, locale)}</p>
+        <button
+          type="button"
+          className="button button--primary"
+          onClick={() => setPausa(null)}
+        >
+          {t(mensagens.retomar)}
+        </button>
+      </div>
+    );
+
+  const dataInvalida = escolha === "data" && !(+new Date(data) > +agora);
+
+  const pausar = () => {
+    const agoraMs = Date.now();
+    const ate =
+      escolha === "hoje"
+        ? +fimDoDia(new Date(agoraMs))
+        : escolha === "data"
+          ? +new Date(data)
+          : null;
+    setPedindo(false);
+    // A data pode ter ficado no passado durante a espera; o aviso aparece
+    if (ate !== null && !(ate > agoraMs)) return;
+    // A pausa vale para tudo, inclusive um "bloquear agora" em andamento
+    setManual(null);
+    setPausa({ inicio: agoraMs, ate });
+  };
+
+  return (
+    <div className="Pausa">
+      {OPCOES_DE_PAUSA.map(([valor, rotulo]) => (
+        <label key={valor}>
+          <input
+            type="radio"
+            name="pausa"
+            checked={escolha === valor}
+            disabled={pedindo}
+            onChange={() => setEscolha(valor)}
+          />
+          {t(rotulo)}
+        </label>
+      ))}
+      {escolha === "data" && (
+        <>
+          <input
+            type="datetime-local"
+            value={data}
+            min={valorDataHora(agora)}
+            disabled={pedindo}
+            onChange={(evento) => setData(evento.target.value)}
+          />
+          {dataInvalida && <small>{t(mensagens.escolhaFuturo)}</small>}
+        </>
+      )}
+      {pedindo ? (
+        <Atrito
+          instrucao={mensagens.instrucaoPausar}
+          frase={mensagens.frasePausar}
+          rotuloBotao={t(mensagens.pausarBloqueio)}
+          onConcluir={pausar}
+        />
+      ) : (
+        <button
+          type="button"
+          className="button button--secondary"
+          disabled={dataInvalida}
+          onClick={() => setPedindo(true)}
+        >
+          {t(mensagens.pausarBloqueio)}
+        </button>
+      )}
+    </div>
+  );
+};
+
 const BloqueioSettings: FC = () => {
   const { t } = useIdioma();
   const [regras, setRegras] = useArmazenamento(CHAVES.regras, regrasVazias);
@@ -253,6 +379,13 @@ const BloqueioSettings: FC = () => {
 
   return (
     <div className="BloqueioSettings">
+      {temRegras && (
+        <>
+          <h5>{t(mensagens.pausarBloqueio)}</h5>
+          <PausaDoBloqueio agora={agora} />
+        </>
+      )}
+
       {temRegras && (
         <Trava
           destrancadaAte={destrancada ? destrancadaAte : null}

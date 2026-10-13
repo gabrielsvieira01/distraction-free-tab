@@ -19,6 +19,7 @@ import {
   MINUTOS_FURO,
   motivoDoBloqueio,
   Motivo,
+  Pausa,
   regrasVazias,
   usoVazio,
 } from "../foco/regras";
@@ -59,15 +60,16 @@ async function iniciar() {
     encerrar ? bloqueioAgoraAtivo(manualAtual, Date.now()) : !!motivoAtual;
 
   async function atualizar() {
-    const [regras, uso, furos, manual] = await Promise.all([
+    const [regras, uso, furos, manual, pausa] = await Promise.all([
       ler(CHAVES.regras, regrasVazias),
       ler(CHAVES.uso, usoVazio),
       ler(CHAVES.furos, [] as Furo[]),
       ler<BloqueioAgora | null>(CHAVES.agora, null),
+      ler<Pausa | null>(CHAVES.pausa, null),
     ]);
     const agora = new Date();
     manualAtual = manual;
-    motivoAtual = motivoDoBloqueio(destino, agora, regras, uso, furos, manual);
+    motivoAtual = motivoDoBloqueio(destino, agora, regras, uso, furos, manual, pausa);
 
     if (encerrar) {
       $("site").textContent = t(mensagens.tituloEncerrar);

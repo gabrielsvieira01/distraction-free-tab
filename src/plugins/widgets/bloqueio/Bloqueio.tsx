@@ -5,7 +5,12 @@ import {
   extensaoDisponivel,
   useArmazenamento,
 } from "../../../foco/armazenamento";
-import { descreverAte, formatarDuracao, formatarHora } from "../../../foco/idioma";
+import {
+  descreverAte,
+  descreverPausa,
+  formatarDuracao,
+  formatarHora,
+} from "../../../foco/idioma";
 import { mensagens } from "../../../foco/mensagens";
 import {
   BloqueioAgora,
@@ -14,6 +19,8 @@ import {
   Furo,
   furosDoDia,
   minutosArredondados,
+  Pausa,
+  pausaAtiva,
   regrasVazias,
   sitesDasRegras,
   usadoHoje,
@@ -25,6 +32,7 @@ import { useAgora } from "./useAgora";
 
 const furosVazios: Furo[] = [];
 const semBloqueioAgora: BloqueioAgora | null = null;
+const semPausa: Pausa | null = null;
 /** Durações do "bloquear agora"; null = até desligar */
 const DURACOES = [25, 60, 120, null];
 
@@ -36,6 +44,10 @@ const Bloqueio: FC = () => {
   const [manual, setManual] = useArmazenamento<BloqueioAgora | null>(
     CHAVES.agora,
     semBloqueioAgora,
+  );
+  const [pausa, setPausa] = useArmazenamento<Pausa | null>(
+    CHAVES.pausa,
+    semPausa,
   );
   const agora = useAgora();
 
@@ -53,6 +65,7 @@ const Bloqueio: FC = () => {
   const furosHoje = furosDoDia(furos, agora).length;
   const sitesAgora = sitesDasRegras(regras);
   const ligado = bloqueioAgoraAtivo(manual, +agora);
+  const pausado = pausaAtiva(pausa, +agora);
 
   const bloquearAgora = (minutos: number | null) => {
     const inicio = Date.now();
@@ -65,7 +78,13 @@ const Bloqueio: FC = () => {
 
   return (
     <div className="Bloqueio">
-      {ligado ? (
+      {pausado ? (
+        // Retomar não pede atrito: é voltar a se proteger
+        <p>
+          ⏸ {descreverPausa(pausa, t, locale)} ·{" "}
+          <a onClick={() => setPausa(null)}>{t(mensagens.retomarCurto)}</a>
+        </p>
+      ) : ligado ? (
         <p>
           🔒 {t(mensagens.bloqueioImediato)}{" "}
           <span>
@@ -95,12 +114,14 @@ const Bloqueio: FC = () => {
         )
       )}
 
-      {faixasAgora.map(({ regra, fim }) => (
-        <p key={regra.id}>
-          🔒 {regra.sites.join(", ")}{" "}
-          <span>{t(mensagens.ate, { time: formatarHora(fim!, locale) })}</span>
-        </p>
-      ))}
+      {/* Em pausa, nenhuma faixa está bloqueando de fato */}
+      {!pausado &&
+        faixasAgora.map(({ regra, fim }) => (
+          <p key={regra.id}>
+            🔒 {regra.sites.join(", ")}{" "}
+            <span>{t(mensagens.ate, { time: formatarHora(fim!, locale) })}</span>
+          </p>
+        ))}
 
       {limites.map((limite) => {
         const usado = minutosArredondados(usadoHoje(uso, limite.site, agora));

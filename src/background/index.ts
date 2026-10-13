@@ -9,6 +9,8 @@ import {
   hostDaUrl,
   limitesDoHost,
   motivoDoBloqueio,
+  Pausa,
+  pausaAtiva,
   Regras,
   regrasVazias,
   registrarFuro,
@@ -30,20 +32,22 @@ let regras: Regras = regrasVazias;
 let uso: Uso = usoVazio;
 let furos: Furo[] = [];
 let manual: BloqueioAgora | null = null;
+let pausa: Pausa | null = null;
 let timer: Timer = timerPadrao;
 
 const urlDeBloqueio = (url: string) =>
   `${PAGINA_BLOQUEIO}?u=${encodeURIComponent(url)}`;
 
 const motivo = (url: string, agora = new Date()) =>
-  motivoDoBloqueio(url, agora, regras, uso, furos, manual);
+  motivoDoBloqueio(url, agora, regras, uso, furos, manual, pausa);
 
 async function carregar() {
-  [regras, uso, furos, manual, timer] = await Promise.all([
+  [regras, uso, furos, manual, pausa, timer] = await Promise.all([
     ler(CHAVES.regras, regrasVazias),
     ler(CHAVES.uso, usoVazio),
     ler(CHAVES.furos, [] as Furo[]),
     ler<BloqueioAgora | null>(CHAVES.agora, null),
+    ler<Pausa | null>(CHAVES.pausa, null),
     ler(CHAVES.timer, timerPadrao),
   ]);
   await sincronizarTimer();
@@ -59,6 +63,8 @@ browser.storage.onChanged.addListener((mudancas, area) => {
     furos = (mudancas[CHAVES.furos].newValue as Furo[]) ?? [];
   if (CHAVES.agora in mudancas)
     manual = (mudancas[CHAVES.agora].newValue as BloqueioAgora) ?? null;
+  if (CHAVES.pausa in mudancas)
+    pausa = (mudancas[CHAVES.pausa].newValue as Pausa) ?? null;
   if (CHAVES.timer in mudancas) {
     timer = (mudancas[CHAVES.timer].newValue as Timer) ?? timerPadrao;
     sincronizarTimer().catch(console.error);
@@ -129,10 +135,14 @@ async function tick() {
   await contarUso(segundos, new Date(agora));
   await atualizarSelo();
 
-  // Bloqueio imediato que chegou ao fim sai do storage, para o widget voltar ao normal
+  // Bloqueio imediato e pausa que chegaram ao fim saem do storage, para o widget voltar ao normal
   if (manual && !bloqueioAgoraAtivo(manual, agora)) {
     manual = null;
     await gravar(CHAVES.agora, null);
+  }
+  if (pausa && !pausaAtiva(pausa, agora)) {
+    pausa = null;
+    await gravar(CHAVES.pausa, null);
   }
 
   // Abas que já estavam abertas quando a faixa começou, o limite estourou ou o furo venceu

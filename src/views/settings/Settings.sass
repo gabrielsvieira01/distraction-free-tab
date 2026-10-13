@@ -44,11 +44,20 @@
         left: 12px
         width: 360px
         max-width: calc(100% - 24px)
+        display: flex
+        flex-direction: column
+        overflow: hidden
+        transition: transform 0.15s ease-out
+
+    // Só o conteúdo rola; o aro do vidro (::before do .plane) tem a altura do
+    // painel e, dentro de um elemento com rolagem, subiria junto com o texto
+    .plane-conteudo
+        flex: 1
+        min-height: 0
         overflow-y: auto
         padding: 0 1.25rem 1.5rem
         scrollbar-width: thin
         scrollbar-color: rgba(255, 255, 255, 0.25) transparent
-        transition: transform 0.15s ease-out
 
     label
         display: block
@@ -67,6 +76,7 @@
     input[type=number],
     input[type=text],
     input[type=time],
+    input[type=datetime-local],
     input[type=url],
     textarea,
     select
@@ -90,7 +100,8 @@
         &:invalid + .input--error
             display: block
 
-    input[type=time]
+    input[type=time],
+    input[type=datetime-local]
         color-scheme: dark
 
     input[type=radio],

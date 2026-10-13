@@ -1,10 +1,12 @@
 import {
   bloqueioAgoraAtivo,
   fimDaFaixa,
+  fimDoDia,
   furosDoDia,
   limitesDoHost,
   motivoDoBloqueio,
   normalizarSite,
+  pausaAtiva,
   RegraHorario,
   Regras,
   registrarFuro,
@@ -184,5 +186,31 @@ describe("bloquear agora", () => {
     expect(
       motivoDoBloqueio("https://youtube.com", agora, regras, usoVazio, registrarFuro([], "youtube.com", +agora), semFim),
     ).toBeNull();
+  });
+});
+
+describe("pausa", () => {
+  // Segunda, 10h: dentro da faixa da manhã
+  const agora = em(5, 10);
+  const estourado = { dia: "2026-10-05", segundos: { "instagram.com": 31 * 60 } };
+
+  it("libera horário, limite e bloquear agora enquanto vale", () => {
+    const pausa = { inicio: +agora, ate: +agora + 3600e3 };
+    const manual = { inicio: +agora, ate: null };
+    expect(motivoDoBloqueio("https://youtube.com", agora, regras, usoVazio, [], null, pausa)).toBeNull();
+    expect(motivoDoBloqueio("https://instagram.com", agora, regras, estourado, [], null, pausa)).toBeNull();
+    expect(motivoDoBloqueio("https://youtube.com", agora, regras, usoVazio, [], manual, pausa)).toBeNull();
+  });
+
+  it("volta a bloquear quando acaba; sem fim dura até retomar", () => {
+    const pausa = { inicio: +agora - 7200e3, ate: +agora - 1 };
+    expect(motivoDoBloqueio("https://youtube.com", agora, regras, usoVazio, [], null, pausa)?.tipo).toBe("horario");
+    expect(pausaAtiva({ inicio: +agora, ate: null }, +agora + 30 * 864e5)).toBe(true);
+    expect(pausaAtiva(null, +agora)).toBe(false);
+  });
+
+  it("\"resto do dia\" acaba na meia-noite seguinte", () => {
+    expect(fimDoDia(em(5, 10, 30))).toEqual(new Date(2026, 9, 6, 0, 0));
+    expect(fimDoDia(em(5, 23, 59))).toEqual(new Date(2026, 9, 6, 0, 0));
   });
 });

@@ -79,55 +79,58 @@ const Settings: React.FC = () => {
       <a onClick={toggleSettings} className="fullscreen" />
 
       <div className="plane">
-        <Logo />
+        {/* A rolagem fica numa camada interna, para o aro de vidro do painel não rolar junto */}
+        <div className="plane-conteudo">
+          <Logo />
 
-        <Background />
+          <Background />
 
-        <Widgets />
+          <Widgets />
 
-        <System />
+          <System />
 
-        <p style={{ marginBottom: "2rem" }}>
+          <p style={{ marginBottom: "2rem" }}>
+            <FormattedMessage
+              {...ui.importarExportar}
+              values={{
+                import: (
+                  <a onClick={handleImport}>{intl.formatMessage(ui.importar)}</a>
+                ),
+                export: (
+                  <a onClick={handleExport}>{intl.formatMessage(ui.exportar)}</a>
+                ),
+                reset: (
+                  <a onClick={handleReset}>{intl.formatMessage(ui.redefinir)}</a>
+                ),
+              }}
+            />
+          </p>
+
+          <Persist />
+
           <FormattedMessage
-            {...ui.importarExportar}
+            {...mensagens.creditos}
+            tagName="p"
             values={{
-              import: (
-                <a onClick={handleImport}>{intl.formatMessage(ui.importar)}</a>
-              ),
-              export: (
-                <a onClick={handleExport}>{intl.formatMessage(ui.exportar)}</a>
-              ),
-              reset: (
-                <a onClick={handleReset}>{intl.formatMessage(ui.redefinir)}</a>
+              tabliss: (
+                <a
+                  href="https://github.com/joelshepherd/tabliss"
+                  rel="noopener noreferrer"
+                  target="_blank"
+                >
+                  Tabliss
+                </a>
               ),
             }}
           />
-        </p>
 
-        <Persist />
-
-        <FormattedMessage
-          {...mensagens.creditos}
-          tagName="p"
-          values={{
-            tabliss: (
-              <a
-                href="https://github.com/joelshepherd/tabliss"
-                rel="noopener noreferrer"
-                target="_blank"
-              >
-                Tabliss
-              </a>
-            ),
-          }}
-        />
-
-        <FormattedMessage
-          id="settings.translationCredits"
-          description="Give yourself some credit :)"
-          defaultMessage=" "
-          tagName="p"
-        />
+          <FormattedMessage
+            id="settings.translationCredits"
+            description="Give yourself some credit :)"
+            defaultMessage=" "
+            tagName="p"
+          />
+        </div>
       </div>
     </div>
   );

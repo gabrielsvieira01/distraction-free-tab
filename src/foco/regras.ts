@@ -45,6 +45,12 @@ export type BloqueioAgora = {
   ate: number | null;
 };
 
+/** Pausa de todo o bloqueio (modo férias); `ate` null = até a pessoa retomar */
+export type Pausa = {
+  inicio: number;
+  ate: number | null;
+};
+
 export type Motivo =
   | { tipo: "horario"; site: string; regra: RegraHorario; liberaEm: Date }
   | { tipo: "agora"; site: string; ate: Date | null }
@@ -143,6 +149,20 @@ export function bloqueioAgoraAtivo(
   return !!manual && (manual.ate === null || manual.ate > agora);
 }
 
+export function pausaAtiva(
+  pausa: Pausa | null,
+  agora: number,
+): pausa is Pausa {
+  return !!pausa && (pausa.ate === null || pausa.ate > agora);
+}
+
+/** Meia-noite que encerra o dia de `agora` (hora local) */
+export function fimDoDia(agora: Date): Date {
+  const fim = new Date(agora);
+  fim.setHours(24, 0, 0, 0);
+  return fim;
+}
+
 export function motivoDoBloqueio(
   url: string,
   agora: Date,
@@ -150,9 +170,10 @@ export function motivoDoBloqueio(
   uso: Uso,
   furos: Furo[],
   manual: BloqueioAgora | null = null,
+  pausa: Pausa | null = null,
 ): Motivo | null {
   const host = hostDaUrl(url);
-  if (!host) return null;
+  if (!host || pausaAtiva(pausa, +agora)) return null;
 
   for (const regra of regras.horarios) {
     if (!regra.ativa) continue;

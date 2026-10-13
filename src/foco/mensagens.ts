@@ -30,6 +30,29 @@ export const mensagens = m({
   bloqueioImediato: { id: "foco.blockNow.running", defaultMessage: "Blocking now" },
   encerrar: { id: "foco.blockNow.end", defaultMessage: "end" },
 
+  // Pausa de todo o bloqueio (modo férias)
+  pausarBloqueio: { id: "foco.pause.title", defaultMessage: "Pause blocking" },
+  pausaHoje: { id: "foco.pause.today", defaultMessage: "For the rest of today" },
+  pausaAteData: {
+    id: "foco.pause.untilDate",
+    defaultMessage: "Until a specific date and time",
+  },
+  pausaAberta: { id: "foco.pause.untilResumed", defaultMessage: "Until I resume it" },
+  escolhaFuturo: {
+    id: "foco.pause.pickFuture",
+    defaultMessage: "Pick a time in the future.",
+  },
+  pausadaAte: {
+    id: "foco.pause.pausedUntil",
+    defaultMessage: "Blocking paused until {time}.",
+  },
+  pausadaAberta: {
+    id: "foco.pause.pausedOpen",
+    defaultMessage: "Blocking paused until you resume it.",
+  },
+  retomar: { id: "foco.pause.resume", defaultMessage: "Resume blocking" },
+  retomarCurto: { id: "foco.pause.resumeShort", defaultMessage: "resume" },
+
   // Opções do widget de bloqueio
   porHorario: { id: "foco.rules.schedule", defaultMessage: "Block on a schedule" },
   sitesUmPorLinha: { id: "foco.rules.sites", defaultMessage: "Sites (one per line)" },
@@ -66,6 +89,10 @@ export const mensagens = m({
   instrucaoEncerrar: {
     id: "foco.friction.endEarly",
     defaultMessage: "To end it early, type the phrase below:",
+  },
+  instrucaoPausar: {
+    id: "foco.friction.pause",
+    defaultMessage: "To pause blocking, type the phrase below:",
   },
   instrucaoEditar: {
     id: "foco.friction.editRules",
@@ -105,6 +132,10 @@ export const mensagens = m({
   fraseEncerrar: {
     id: "foco.phrase.end",
     defaultMessage: "I am ending my focus session on purpose",
+  },
+  frasePausar: {
+    id: "foco.phrase.pause",
+    defaultMessage: "I am pausing my own blocks on purpose",
   },
   fraseEditar: {
     id: "foco.phrase.edit",

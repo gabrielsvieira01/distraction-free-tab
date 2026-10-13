@@ -9,6 +9,8 @@ export const CHAVES = {
   uso: "bloqueio.uso",
   furos: "bloqueio.furos",
   agora: "bloqueio.agora",
+  /** Pausa de todo o bloqueio (modo férias) */
+  pausa: "bloqueio.pausa",
   /** Até quando a edição das regras fica destrancada (ms) */
   edicao: "bloqueio.edicaoAte",
   timer: "timer",

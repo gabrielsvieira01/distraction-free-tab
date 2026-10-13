@@ -1,7 +1,7 @@
 import { IntlMessageFormat } from "intl-messageformat";
 import { defaultLocale, messages } from "../locales";
 import { Mensagem, mensagens } from "./mensagens";
-import { Motivo, minutosArredondados } from "./regras";
+import { Motivo, minutosArredondados, Pausa } from "./regras";
 
 export type Traduzir = (
   mensagem: Mensagem,
@@ -36,6 +36,26 @@ export function formatarHora(data: Date, locale: string): string {
   }).format(data);
 }
 
+/**
+ * Só a hora se for ainda hoje (a meia-noite que fecha o dia conta como hoje);
+ * com dia da semana e data se for outro dia
+ */
+export function formatarQuando(
+  data: Date,
+  locale: string,
+  agora = new Date(),
+): string {
+  if (new Date(+data - 1).toDateString() === agora.toDateString())
+    return formatarHora(data, locale);
+  return new Intl.DateTimeFormat(locale, {
+    weekday: "short",
+    day: "numeric",
+    month: "short",
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(data);
+}
+
 /** "25 min", "2 h", "25 мин", "2 時間"... no idioma da pessoa */
 export function formatarDuracao(minutos: number, locale: string): string {
   const horas = minutos >= 60 && minutos % 60 === 0;
@@ -63,6 +83,18 @@ export function descreverAte(
   return ate
     ? t(mensagens.ate, { time: formatarHora(ate, locale) })
     : t(mensagens.ateEncerrar);
+}
+
+export function descreverPausa(
+  pausa: Pausa,
+  t: Traduzir,
+  locale: string,
+): string {
+  return pausa.ate === null
+    ? t(mensagens.pausadaAberta)
+    : t(mensagens.pausadaAte, {
+        time: formatarQuando(new Date(pausa.ate), locale),
+      });
 }
 
 export function descreverMotivo(
